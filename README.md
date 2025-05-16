@@ -2,6 +2,7 @@
 A simple one-to-one real-time chat application demonstrating clean architecture, offline support, and OkHttp websocket integration using Jetpack Compose and Room.
 #  How to Run
 
+Cluster link is added here https://github.com/mohamedfarith/ChatApp/blob/main/app/src/main/java/com/learning/chatapp/Constants.kt for easy access.
 ### Interact with PieSocket by sending this event via WebSocket:
 
 ```json
