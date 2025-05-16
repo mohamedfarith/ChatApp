@@ -55,3 +55,6 @@ Run the app on an emulator or physical device.
 - Clean, MVVM architecture  
 - Jetpack Compose UI with elegant chat layout  
 - Lightweight and maintainable code structure
+
+## Here is the working video of the app
+https://github.com/user-attachments/assets/7d5a94f4-bc90-4ce4-b3f1-b78723f17c21
