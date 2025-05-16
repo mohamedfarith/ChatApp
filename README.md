@@ -1,19 +1,6 @@
-### ChatApp – Interview Assignment
-A simple one-to-one real-time chat application demonstrating clean architecture, offline support, and Socket.IO integration using Jetpack Compose and Room.
+### ChatApp
+A simple one-to-one real-time chat application demonstrating clean architecture, offline support, and OkHttp websocket integration using Jetpack Compose and Room.
 #  How to Run
-
-### Clone the repository
-
-```bash
-git clone https://github.com/yourname/ChatApp.git
-cd ChatApp
-```
-
-### Open in Android Studio
-
-Run the app on an emulator or physical device.
-
----
 
 ### Interact with PieSocket by sending this event via WebSocket:
 
