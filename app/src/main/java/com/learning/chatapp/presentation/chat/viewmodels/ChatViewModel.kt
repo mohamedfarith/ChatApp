@@ -1,23 +1,19 @@
 package com.learning.chatapp.presentation.chat.viewmodels
 
-import android.os.Message
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.learning.chatapp.Constants
+import com.learning.chatapp.DispatcherProvider
 import com.learning.chatapp.Resource
-import com.learning.chatapp.domain.repository.chat.ChatRepository
 import com.learning.chatapp.data.remote.socket.SocketManager
 import com.learning.chatapp.data.local.entity.chat.MessageEntity
 import com.learning.chatapp.domain.models.MessageStatus
 import com.learning.chatapp.domain.usecase.chat.FetchChatUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -28,7 +24,8 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val chatUseCase: FetchChatUseCase,
     private val socketManager: SocketManager,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val currentUserId = savedStateHandle.get<String>("currentUserId") ?: Constants.CURRENT_USER_ID
@@ -40,7 +37,7 @@ class ChatViewModel @Inject constructor(
     init {
         observeSocketEvents()
         socketManager.connect()
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.default) {
             socketManager.incomingMessages.collectLatest { message ->
                 chatUseCase.insertMessage(message) // Save to Room
             }
@@ -50,7 +47,7 @@ class ChatViewModel @Inject constructor(
 
 
     fun fetchMessages() {
-        viewModelScope.launch {
+        viewModelScope.launch (dispatcherProvider.default){
             _messages.value = Resource.Loading
             try {
                 chatUseCase.getChatMessages(currentUserId, otherUserId)
@@ -71,7 +68,7 @@ class ChatViewModel @Inject constructor(
             timestamp = System.currentTimeMillis(),
             status = MessageStatus.PENDING
         )
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             chatUseCase.insertMessage(message.copy(status = MessageStatus.PENDING))
             val success = socketManager.sendMessage(message)
             val updatedMessage = message.copy(
@@ -85,7 +82,7 @@ class ChatViewModel @Inject constructor(
      * Retry failed messages when connection comes back or screen is resumed
      */
     fun retryFailedMessages() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             val failedMessages =
                 chatUseCase.getFailedMessages(currentUserId, otherUserId).first()
             failedMessages.forEach { msg ->

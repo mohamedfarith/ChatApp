@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.ui.unit.Constraints
 import androidx.room.Room
 import com.learning.chatapp.Constants
+import com.learning.chatapp.DispatcherProvider
 import com.learning.chatapp.data.remote.socket.SocketManager
 import com.learning.chatapp.data.local.db.AppDatabase
 import com.learning.chatapp.data.remote.socket.ConnectivityObserver
@@ -33,6 +34,10 @@ object AppModule {
         repository: ChatRepository,
         connectivityObserver: ConnectivityObserver,
     ): SocketManager = SocketManager(repository, connectivityObserver)
+
+    @Provides
+    @Singleton
+    fun provideDispatcher(): DispatcherProvider = com.learning.chatapp.DefaultDispatcherProvider
 
     @Provides
     @Singleton
